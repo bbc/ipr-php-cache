@@ -1,0 +1,16 @@
+#!/bin/sh
+
+RESULT=0
+
+# Unit Tests
+echo "Unit Tests\n"
+vendor/bin/phpunit || RESULT=1
+
+# Verify the code coverage value:
+script/verify-coverage || RESULT=1
+
+# Code Sniffer
+echo "\n\nCode Style\n"
+vendor/bin/phpcs . --ignore=build,script,vendor --standard=PSR2 -p  || RESULT=1
+
+exit $RESULT

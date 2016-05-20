@@ -1,0 +1,34 @@
+{
+    "name": "bbc/ipr-cache",
+    "description": "A simple cache wrapper, making use of Doctrine Cache that implements fuzzy and stale-while-revalidate caching.",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Alex Gisby",
+            "email": "alex.gisby@bbc.co.uk"
+        },
+        {
+            "name": "Ben Scott",
+            "email": "ben.scott@bbc.co.uk"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "doctrine/cache": "^1.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.1",
+        "squizlabs/php_codesniffer": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "BBC\\iPlayerRadio\\Cache\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BBC\\iPlayerRadio\\Cache\\Tests\\": "tests/"
+        }
+    }
+}

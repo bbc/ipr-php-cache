@@ -1,0 +1,38 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * This script ensures that unit test coverage is of a high enough
+ * percentage before allowing the build to pass.
+ *
+ * Basically, we can fail the build if the coverage is too low.
+ */
+
+define('COVERAGE_THRESHOLD', 100.0);
+define('COVERAGE_TEXT', __DIR__.'/../build/reports/coverage.txt');
+
+echo '-----------------------------'.PHP_EOL;
+echo '| Checking Code Coverage... |'.PHP_EOL;
+echo '-----------------------------'.PHP_EOL;
+
+if (!file_exists(COVERAGE_TEXT)) {
+    echo '[ERROR] No coverage file exists!'.PHP_EOL;
+    exit(1);
+}
+
+$coverageText = file_get_contents(COVERAGE_TEXT);
+$lines = explode(PHP_EOL, $coverageText);
+$percentage = 0;
+foreach ($lines as $line) {
+    if (preg_match('/^( +)Lines:( +)(?P<percentage>[0-9.]+)%/', $line, $matches)) {
+        $percentage = (float)$matches['percentage'];
+        break;
+    }
+}
+
+if ($percentage < COVERAGE_THRESHOLD) {
+    echo 'Coverage is below required! Current: '.$percentage.'%, threshold: '.COVERAGE_THRESHOLD.'%'.PHP_EOL;
+    exit(1);
+} else {
+    echo 'Coverage is A-OK!  Current: '.$percentage.'%, threshold: '.COVERAGE_THRESHOLD.'%'.PHP_EOL;
+}
