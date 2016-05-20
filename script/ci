@@ -7,7 +7,9 @@ echo "Unit Tests\n"
 vendor/bin/phpunit || RESULT=1
 
 # Verify the code coverage value:
-script/verify-coverage || RESULT=1
+if [ -f ./build/reports/coverage.txt ]; then
+    script/verify-coverage || RESULT=1
+fi
 
 # Code Sniffer
 echo "\n\nCode Style\n"
