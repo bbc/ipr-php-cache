@@ -2,6 +2,11 @@
 
 A simple cache wrapper around Doctrine\Cache that allows us to do standard, fuzzy and stale-while-revalidate caching.
 
+[![Build Status](https://travis-ci.org/bbc/ipr-php-cache.svg?branch=master)](https://travis-ci.org/bbc/ipr-php-cache)
+[![Latest Stable Version](https://poser.pugx.org/bbc/ipr-cache/v/stable.svg)](https://packagist.org/packages/bbc/ipr-cache)
+[![Total Downloads](https://poser.pugx.org/bbc/ipr-cache/downloads.svg)](https://packagist.org/packages/bbc/ipr-cache)
+[![License](https://poser.pugx.org/bbc/ipr-cache/license.svg)](https://packagist.org/packages/bbc/ipr-cache)
+
 - [Requirements](#requirements)
 - [Usage](#usage)
     - [Getting Started](#getting-started)
