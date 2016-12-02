@@ -122,4 +122,68 @@ class CacheTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($cache->hasKey('cacheKey'), 'hasKey() reports that cacheKey remains.');
         $this->assertFalse($adapter->contains('cacheKey'), 'data is still in the adapter');
     }
+
+    /* --------------- Cache Prefixing ------------------ */
+
+    public function testSetGetPrefix()
+    {
+        $cache = new Cache(new ArrayCache());
+        $this->assertEquals('', $cache->getPrefix());
+
+        $cache = new Cache(new ArrayCache(), 'mycache_');
+        $this->assertEquals('mycache_', $cache->getPrefix());
+
+        $this->assertEquals($cache, $cache->setPrefix('johnnycache_'));
+        $this->assertEquals('johnnycache_', $cache->getPrefix());
+    }
+
+    public function testCacheSaveWithPrefix()
+    {
+        $adapter = new ArrayCache();
+        $cache = new Cache($adapter, 'mycache_');
+
+        $item = $cache->get('cacheKey');
+        $item->setData('Hello, I am data');
+        $item->setLifetime(20);
+        $cache->save($item);
+
+        $this->assertTrue($adapter->contains('mycache_cacheKey'), 'prefix has not been applied.');
+    }
+
+    public function testCacheHasKeyWithPrefix()
+    {
+        $adapter = new ArrayCache();
+        $cache = new Cache($adapter, 'mycache_');
+
+        $item = $cache->get('cacheKey');
+        $item->setData('Hello, I am data');
+        $item->setLifetime(20);
+        $cache->save($item);
+
+        $this->assertTrue($adapter->contains('mycache_cacheKey'), 'prefix has not been applied.');
+        $this->assertTrue($cache->hasKey('cacheKey'));
+    }
+
+    public function testCacheReadWithPrefix()
+    {
+        $adapter = new ArrayCache();
+        $cache = new Cache($adapter, 'mycache_');
+
+        $adapter->save('mycache_cacheKey', 'Hello, I am data', 20);
+
+        $item = $cache->get('cacheKey');
+        $this->assertTrue($item->isValid());
+        $this->assertEquals('Hello, I am data', $item->getData());
+    }
+
+    public function testCacheDeleteWithPrefix()
+    {
+        $adapter = new ArrayCache();
+        $cache = new Cache($adapter, 'mycache_');
+
+        $adapter->save('mycache_cacheKey', 'Hello, I am data', 20);
+
+        $cache->delete('cacheKey');
+        $this->assertFalse($adapter->contains('mycache_cacheKey'));
+    }
 }
