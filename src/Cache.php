@@ -20,13 +20,42 @@ class Cache implements CacheInterface
     protected $adapter;
 
     /**
+     * @var     string
+     */
+    protected $prefix = '';
+
+    /**
      * Pass in the adapter that does the read/write.
      *
-     * @param DoctrineCacheInterface $adapter
+     * @param   DoctrineCacheInterface  $adapter
+     * @param   string                  $prefix
      */
-    public function __construct(DoctrineCacheInterface $adapter)
+    public function __construct(DoctrineCacheInterface $adapter, $prefix = '')
     {
         $this->adapter = $adapter;
+        $this->prefix = $prefix;
+    }
+
+    /**
+     * Sets the prefix to use when reading, writing and deleting cache objects.
+     *
+     * @param   string  $prefix
+     * @return  $this
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+        return $this;
+    }
+
+    /**
+     * Returns the cache prefix we're using for reading, writing and deleting.
+     *
+     * @return  string
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
     }
 
     /**
@@ -44,7 +73,7 @@ class Cache implements CacheInterface
     {
         return new CacheItem(
             $key,
-            $this->adapter->fetch($key)
+            $this->adapter->fetch($this->prefix.$key)
         );
     }
 
@@ -52,13 +81,13 @@ class Cache implements CacheInterface
      * Stores an item in the cache.
      *
      * @param   CacheItemInterface   $item
-     * @return  bool
+     * @return  $this
      */
     public function save(CacheItemInterface $item)
     {
         $item->setStoredTime(time());
         $this->adapter->save(
-            $item->getKey(),
+            $this->prefix.$item->getKey(),
             $item->getDataEnvelope(),
             $item->getLifetime()
         );
@@ -95,7 +124,7 @@ class Cache implements CacheInterface
      */
     public function hasKey($key)
     {
-        return $this->adapter->contains($key);
+        return $this->adapter->contains($this->prefix.$key);
     }
 
     /**
@@ -106,7 +135,7 @@ class Cache implements CacheInterface
      */
     public function delete($key)
     {
-        $this->adapter->delete($key);
+        $this->adapter->delete($this->prefix.$key);
         return $this;
     }
 }

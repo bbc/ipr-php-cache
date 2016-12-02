@@ -14,6 +14,7 @@ A simple cache wrapper around Doctrine\Cache that allows us to do standard, fuzz
     - [Fuzzy Caching](#fuzzy-caching)
     - [Pure Caching](#pure-caching)
     - [Stale While Revalidate Caching](#stale-while-revalidate-caching)
+    - [Cache Prefixing](#cache-prefixing)
 - [Interfaces](#interfaces)
 - [Mocking the Cache](#mocking-the-cache)
 
@@ -220,6 +221,39 @@ if ($item->isExpired()) {
 If you elect to use soft caching by calling setBestBefore() then the fuzzing
 will be applied to the Best Before time and NOT the Expires time. This is
 again to prevent a stampede as your app begins re-requesting data.
+
+### Cache Prefixing
+
+*New in v1.1.0*
+
+The Cache class can invisibly add an additional prefix to all of the cache keys you're supplying. This is useful
+when you know two applications are writing into the cache backend with similar keys (md5'd strings for instance).
+
+```php
+// You can either pass the prefix into the constructor:
+$cache = new Cache($adapter, 'myprefix_');
+
+// Or set it explicitly:
+$cache->setPrefix('mycache_');
+```
+
+You **never** need to use the prefix again; reading, writing and deleting objects all happens as if the prefix
+isn't there, the Cache class handles it all internally:
+
+```php
+$cache = new Cache($adapter, 'myprefix_');
+$item = $cache->get('todays_weather'); // actually reads: 'myprefix_todays_weather'
+
+$item->setData('Cloudy');
+$cache->save($item);
+
+$cache->delete('yesterdays_weather'); // actually removes 'myprefix_yesterdays_weather'
+
+if ($cache->hasKey('todays_weather')) {
+    $item = $cache->get('todays_weather');
+    echo 'Today it is: '.$item->getData();
+}
+```
 
 ## Interfaces
 
